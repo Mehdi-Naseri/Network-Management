@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "دسترسی به کامپیوتر از راه دور";
+}
+
+<h2>دسترسی به کامپیوتر از راه دور</h2>
+
+
+<label>User Name</label>
+<input type="text" id="UserName"/>
+<label>Password</label>
+<input type="text" id="Password"/>
+<label>IP</label>
+<input type="text" id="IP"/>
+
+<button class="btn btn-primary" id="ShowServerInformation">Recieve Info</button>
+
+<div id="ServerInformationResult" />
+
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#ShowServerInformation").click(function () {
+                document.body.style.cursor = "progress";
+                DisplayServerInformation();
+            });
+            $("body").on("click",".closePanel",function () {
+                $(this).closest(".panel").remove();
+            });
+        });
+
+        //نمایش مشخصات سرور
+        function DisplayServerInformation(ServerIP) {
+            var Username = $("#UserName").val();
+            var Password = $("#Password").val();
+            var ServerIP = $("#IP").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ServerInformation")' //+ '/' + ServerId
+                ,
+                data: { "ServerIP": ServerIP, 'Username': Username, "Password": Password }
+            })
+            .success(function (html) {
+                $('#ServerInformationResult').before(html);
+                document.body.style.cursor = "default";
+            })
+            .error(function () {
+                alert("دریافت اطلاعات از سرور امکان پذیر نشد");
+                document.body.style.cursor = "default";
+            });
+        };
+    </script>
+}
